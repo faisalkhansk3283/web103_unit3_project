@@ -55,3 +55,16 @@
     padding: 10px;
     text-align: center;
 }
+
+.past-event {
+    opacity: 0.6;
+    filter: grayscale(60%);
+}
+
+.past-event .text p.past {
+    background-color: red;
+    color: white;
+    font-weight: 700;
+    padding: 5px 10px;
+    text-align: center;
+}

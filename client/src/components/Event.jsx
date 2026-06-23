@@ -1,62 +1,33 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import '../css/Event.css'
 
-const Event = (props) => {
+const Event = ({ id, name, description, event_date, image_url }) => {
+  const now = new Date()
+  const eventDate = new Date(event_date)
+  const isPast = eventDate < now
 
-    const [event, setEvent] = useState([])
-    const [time, setTime] = useState([])
-    const [remaining, setRemaining] = useState([])
+  const diffMs = eventDate - now
+  const diffDays = Math.floor(Math.abs(diffMs) / (1000 * 60 * 60 * 24))
+  const diffHours = Math.floor((Math.abs(diffMs) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const eventData = await EventsAPI.getEventsById(props.id)
-                setEvent(eventData)
-            }
-            catch (error) {
-                throw error
-            }
-        }) ()
-    }, [])
+  const countdown = isPast
+    ? `Event passed ${diffDays}d ${diffHours}h ago`
+    : `${diffDays}d ${diffHours}h remaining`
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const result = await dates.formatTime(event.time)
-                setTime(result)
-            }
-            catch (error) {
-                throw error
-            }
-        }) ()
-    }, [event])
+  return (
+    <article className={`event-information ${isPast ? 'past-event' : ''}`}>
+      <img src={image_url} />
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const timeRemaining = await dates.formatRemainingTime(event.remaining)
-                setRemaining(timeRemaining)
-                dates.formatNegativeTimeRemaining(remaining, event.id)
-            }
-            catch (error) {
-                throw error
-            }
-        }) ()
-    }, [event])
-
-    return (
-        <article className='event-information'>
-            <img src={event.image} />
-
-            <div className='event-information-overlay'>
-                <div className='text'>
-                    <h3>{event.title}</h3>
-                    <p><i className="fa-regular fa-calendar fa-bounce"></i> {event.date} <br /> {time}</p>
-                    <p id={`remaining-${event.id}`}>{remaining}</p>
-                </div>
-            </div>
-        </article>
-    )
+      <div className='event-information-overlay'>
+        <div className='text'>
+          <h3>{name}</h3>
+          <p>{description}</p>
+          <p><i className="fa-regular fa-calendar fa-bounce"></i> {eventDate.toLocaleDateString()} {eventDate.toLocaleTimeString()}</p>
+          <p id={`remaining-${id}`} className={isPast ? 'past' : ''}>{countdown}</p>
+        </div>
+      </div>
+    </article>
+  )
 }
 
 export default Event
